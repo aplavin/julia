@@ -209,6 +209,10 @@ function unionsplitcost(argtypes::Union{SimpleVector,Vector{Any}})
     nu = 1
     max = 2
     for ti in argtypes
+        # TODO remove this to implement callsite refinement of MustAlias
+        if isa(ti, MustAlias) && isa(widenconst(ti), Union)
+            ti = widenconst(ti)
+        end
         if isa(ti, Union)
             nti = unionlen(ti)
             if nti > max
@@ -241,6 +245,10 @@ function _switchtupleunion(t::Vector{Any}, i::Int, tunion::Vector{Any}, @nospeci
         end
     else
         ti = t[i]
+        # TODO remove this to implement callsite refinement of MustAlias
+        if isa(ti, MustAlias) && isa(widenconst(ti), Union)
+            ti = widenconst(ti)
+        end
         if isa(ti, Union)
             for ty in uniontypes(ti::Union)
                 t[i] = ty

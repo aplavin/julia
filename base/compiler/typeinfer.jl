@@ -307,6 +307,9 @@ function CodeInstance(
         elseif isa(result_type, InterConditional)
             rettype_const = result_type
             const_flags = 0x2
+        elseif isa(result_type, InterMustAlias)
+            rettype_const = result_type
+            const_flags = 0x2
         else
             rettype_const = nothing
             const_flags = 0x00
@@ -569,7 +572,7 @@ function widen_ssavaluetypes!(sv::InferenceState)
     ssavaluetypes = sv.src.ssavaluetypes::Vector{Any}
     for j = 1:length(ssavaluetypes)
         t = ssavaluetypes[j]
-        ssavaluetypes[j] = t === NOT_FOUND ? Bottom : widenconditional(t)
+        ssavaluetypes[j] = t === NOT_FOUND ? Bottom : widenslotwrapper(t)
     end
     return nothing
 end
@@ -625,7 +628,7 @@ function annotate_slot_load!(undefs::Vector{Bool}, vtypes::VarTable, sv::Inferen
             undefs[id] = true
         end
         # add type annotations where needed
-        typ = widenconditional(ignorelimited(vt.typ))
+        typ = widenslotwrapper(ignorelimited(vt.typ))
         if !(sv.slottypes[id] ⊑ typ)
             return TypedSlot(id, typ)
         end
@@ -852,13 +855,15 @@ function typeinf_edge(interp::AbstractInterpreter, method::Method, @nospecialize
             rettype = code.rettype
             if isdefined(code, :rettype_const)
                 rettype_const = code.rettype_const
-                # the second subtyping conditions are necessary to distinguish usual cases
+                # the second subtyping/egal conditions are necessary to distinguish usual cases
                 # from rare cases when `Const` wrapped those extended lattice type objects
                 if isa(rettype_const, Vector{Any}) && !(Vector{Any} <: rettype)
                     rettype = PartialStruct(rettype, rettype_const)
                 elseif isa(rettype_const, PartialOpaque) && rettype <: Core.OpaqueClosure
                     rettype = rettype_const
-                elseif isa(rettype_const, InterConditional) && !(InterConditional <: rettype)
+                elseif isa(rettype_const, InterConditional) && rettype !== InterConditional
+                    rettype = rettype_const
+                elseif isa(rettype_const, InterMustAlias) && rettype !== InterMustAlias
                     rettype = rettype_const
                 else
                     rettype = Const(rettype_const)

@@ -784,7 +784,7 @@ end
 
 function find_source_file(path::AbstractString)
     (isabspath(path) || isfile(path)) && return path
-    base_path = joinpath(Sys.BINDIR, DATAROOTDIR, "julia", "base", path)
+    base_path = joinpath(Sys.BINDIR, DATAROOTDIR, "julia", "src", path)
     return isfile(base_path) ? normpath(base_path) : nothing
 end
 

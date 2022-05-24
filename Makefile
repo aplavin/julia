@@ -7,7 +7,7 @@ default: $(JULIA_BUILD_MODE) # contains either "debug" or "release"
 all: debug release
 
 # sort is used to remove potential duplicates
-DIRS := $(sort $(build_bindir) $(build_depsbindir) $(build_libdir) $(build_private_libdir) $(build_libexecdir) $(build_includedir) $(build_includedir)/julia $(build_sysconfdir)/julia $(build_datarootdir)/julia/src $(build_datarootdir)/julia/stdlib $(build_man1dir))
+DIRS := $(sort $(build_bindir) $(build_depsbindir) $(build_libdir) $(build_private_libdir) $(build_libexecdir) $(build_includedir) $(build_includedir)/julia $(build_sysconfdir)/julia $(build_datarootdir)/julia $(build_datarootdir)/julia/src $(build_datarootdir)/julia/stdlib $(build_man1dir))
 ifneq ($(BUILDROOT),$(JULIAHOME))
 BUILDDIRS := $(BUILDROOT) $(addprefix $(BUILDROOT)/,base src src/flisp src/support src/clangsa cli doc deps stdlib test test/clangsa test/embedding test/llvmpasses)
 BUILDDIRMAKE := $(addsuffix /Makefile,$(BUILDDIRS)) $(BUILDROOT)/sysimage.mk
@@ -319,10 +319,16 @@ endif
 
 	# Copy in all .jl sources as well
 	mkdir -p $(DESTDIR)$(datarootdir)/julia/src $(DESTDIR)$(datarootdir)/julia/test
-	cp -R -L $(JULIAHOME)/src/* $(DESTDIR)$(datarootdir)/julia/src
-	ln -s src/base $(DESTDIR)$(datarootdir)/julia/base # deprecation aid
-	cp -R -L $(JULIAHOME)/test/* $(DESTDIR)$(datarootdir)/julia/test
 	cp -R -L $(build_datarootdir)/julia/* $(DESTDIR)$(datarootdir)/julia
+	# deprecation aid for base/*.jl path
+ifeq ($(BUILD_OS), WINNT)
+	cd $(DESTDIR)$(datarootdir)/julia && cmd //C mklink //J base src/base
+else ifneq (,$(findstring CYGWIN,$(BUILD_OS)))
+	cd $(DESTDIR)$(datarootdir)/julia && cmd /C mklink /J base src/base
+else ifndef JULIA_VAGRANT_BUILD
+	cd $(DESTDIR)$(datarootdir)/julia && ln -sf src/base base
+endif
+	cp -R -L $(JULIAHOME)/test/* $(DESTDIR)$(datarootdir)/julia/test
 	# Copy documentation
 	cp -R -L $(BUILDROOT)/doc/_build/html $(DESTDIR)$(docdir)/
 	# Remove various files which should not be installed

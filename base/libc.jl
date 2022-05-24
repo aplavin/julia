@@ -14,7 +14,7 @@ if Sys.iswindows()
     export GetLastError, FormatMessage
 end
 
-include("generated/errno_h.jl")
+include("../errno_h.jl")
 
 ## RawFD ##
 

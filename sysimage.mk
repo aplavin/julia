@@ -21,7 +21,7 @@ $(build_private_libdir)/%.$(SHLIB_EXT): $(build_private_libdir)/%-o.a
 	@$(DSYMUTIL) $@
 
 BASE_DIR := $(build_datarootdir)/julia/src
-COMPILER_SRCS := $(addprefix $(BASE_DIR)/, \
+COMPILER_SRCS := $(addprefix $(BASE_DIR)/base/, \
 		boot.jl \
 		docs/core.jl \
 		abstractarray.jl \
@@ -50,18 +50,18 @@ COMPILER_SRCS := $(addprefix $(BASE_DIR)/, \
 		traits.jl \
 		refvalue.jl \
 		tuple.jl)
-COMPILER_SRCS += $(shell find $(BASE_DIR)/compiler -name \*.jl)
+COMPILER_SRCS += $(shell find $(BASE_DIR)/base/compiler -name \*.jl)
 BASE_SRCS := $(shell find $(BASE_DIR) -name \*.jl -and -not -name sysimg.jl)
-STDLIB_SRCS := $(BASE_DIR)/sysimg.jl $(shell find $(build_datarootdir)/julia/stdlib/$(VERSDIR)/*/src -name \*.jl)
+STDLIB_SRCS := $(BASE_DIR)/base/sysimg.jl $(shell find $(build_datarootdir)/julia/stdlib/$(VERSDIR)/*/src -name \*.jl)
 
 $(build_private_libdir)/corecompiler.ji: $(COMPILER_SRCS)
-	@$(call PRINT_JULIA, cd $(BASE_DIR) && \
+	@$(call PRINT_JULIA, cd $(BASE_DIR)/base && \
 	$(call spawn,$(JULIA_EXECUTABLE)) -C "$(JULIA_CPU_TARGET)" --output-ji $(call cygpath_w,$@).tmp \
 		--startup-file=no --warn-overwrite=yes -g$(BOOTSTRAP_DEBUG_LEVEL) -O0 compiler/compiler.jl)
 	@mv $@.tmp $@
 
 $(build_private_libdir)/sys.ji: $(build_private_libdir)/corecompiler.ji $(JULIAHOME)/VERSION $(BASE_SRCS) $(STDLIB_SRCS)
-	@$(call PRINT_JULIA, cd $(BASE_DIR) && \
+	@$(call PRINT_JULIA, cd $(BASE_DIR)/base && \
 	if ! JULIA_BINDIR=$(call cygpath_w,$(build_bindir)) WINEPATH="$(call cygpath_w,$(build_bindir));$$WINEPATH" \
 			$(call spawn, $(JULIA_EXECUTABLE)) -g1 -O0 -C "$(JULIA_CPU_TARGET)" --output-ji $(call cygpath_w,$@).tmp $(JULIA_SYSIMG_BUILD_FLAGS) \
 			--startup-file=no --warn-overwrite=yes --sysimage $(call cygpath_w,$<) sysimg.jl; then \
@@ -72,7 +72,7 @@ $(build_private_libdir)/sys.ji: $(build_private_libdir)/corecompiler.ji $(JULIAH
 
 define sysimg_builder
 $$(build_private_libdir)/sys$1-o.a $$(build_private_libdir)/sys$1-bc.a : $$(build_private_libdir)/sys$1-%.a : $$(build_private_libdir)/sys.ji
-	@$$(call PRINT_JULIA, cd $$(BASE_DIR) && \
+	@$$(call PRINT_JULIA, cd $$(BASE_DIR)/base && \
 	if ! JULIA_BINDIR=$$(call cygpath_w,$(build_bindir)) WINEPATH="$$(call cygpath_w,$$(build_bindir));$$$$WINEPATH" \
 			JULIA_NUM_THREADS=1 \
 			$$(call spawn, $3) $2 -C "$$(JULIA_CPU_TARGET)" --output-$$* $$(call cygpath_w,$$@).tmp $$(JULIA_SYSIMG_BUILD_FLAGS) \

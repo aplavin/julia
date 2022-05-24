@@ -37,7 +37,7 @@ configure:
 endif
 
 $(foreach dir,$(DIRS),$(eval $(call dir_target,$(dir))))
-$(foreach link,$(JULIAHOME)/test,$(eval $(call symlink_target,$(link),$$(build_datarootdir)/julia,$(notdir $(link)))))
+$(eval $(call symlink_target,$(JULIAHOME)/test,$$(build_datarootdir)/julia,test))
 
 julia_flisp.boot.inc.phony: julia-deps
 	@$(MAKE) $(QUIET_MAKE) -C $(BUILDROOT)/src julia_flisp.boot.inc.phony
@@ -320,7 +320,7 @@ endif
 	# Copy in all .jl sources as well
 	mkdir -p $(DESTDIR)$(datarootdir)/julia/src $(DESTDIR)$(datarootdir)/julia/test
 	cp -R -L $(JULIAHOME)/src/* $(DESTDIR)$(datarootdir)/julia/src
-	ln -s src $(DESTDIR)$(datarootdir)/julia/base
+	ln -s src/base $(DESTDIR)$(datarootdir)/julia/base # deprecation aid
 	cp -R -L $(JULIAHOME)/test/* $(DESTDIR)$(datarootdir)/julia/test
 	cp -R -L $(build_datarootdir)/julia/* $(DESTDIR)$(datarootdir)/julia
 	# Copy documentation

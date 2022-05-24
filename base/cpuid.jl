@@ -21,7 +21,7 @@ Base.:<=(a::ISA, b::ISA) = a.features <= b.features
 Base.:<(a::ISA,  b::ISA) = a.features <  b.features
 Base.isless(a::ISA,  b::ISA) = a < b
 
-include("generated/features_h.jl")
+include("../features_h.jl")
 
 # Keep in sync with `arch_march_isa_mapping`.
 const ISAs_by_family = Dict(

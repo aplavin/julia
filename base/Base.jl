@@ -151,8 +151,8 @@ using .Iterators: Flatten, Filter, product  # for generators
 include("namedtuple.jl")
 
 # For OS specific stuff
-include("generated/build_h.jl")
-include("generated/version_git.jl")
+include("../build_h.jl")
+include("../version_git.jl")
 
 # These used to be in build_h.jl and are retained for backwards compatibility
 const libblas_name = "libblastrampoline"

@@ -6,7 +6,7 @@ module PCRE
 
 import ..RefValue
 
-include("generated/pcre_h.jl")
+include("../pcre_h.jl")
 
 const PCRE_LIB = "libpcre2-8"
 

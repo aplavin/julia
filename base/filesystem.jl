@@ -91,7 +91,7 @@ uv_fs_req_cleanup(req) = ccall(:uv_fs_req_cleanup, Cvoid, (Ptr{Cvoid},), req)
 include("path.jl")
 include("stat.jl")
 include("file.jl")
-include("generated/file_constants.jl")
+include("../file_constants.jl")
 
 ## Operations with File (fd) objects ##
 

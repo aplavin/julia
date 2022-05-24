@@ -2,7 +2,7 @@
 
 # Core definitions for interacting with the libuv library from Julia
 
-include("generated/uv_constants.jl")
+include("../uv_constants.jl")
 
 # convert UV handle data to julia object, checking for null
 function uv_sizeof_handle(handle)

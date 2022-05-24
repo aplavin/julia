@@ -93,7 +93,7 @@ function append_default_depot_path!(DEPOT_PATH)
     path in DEPOT_PATH || push!(DEPOT_PATH, path)
     path = abspath(Sys.BINDIR, "..", "share", "julia")
     path in DEPOT_PATH || push!(DEPOT_PATH, path)
-    nothing
+    return DEPOT_PATH
 end
 
 function init_depot_path()
@@ -112,6 +112,7 @@ function init_depot_path()
     else
         append_default_depot_path!(DEPOT_PATH)
     end
+    nothing
 end
 
 ## LOAD_PATH & ACTIVE_PROJECT ##

@@ -322,9 +322,9 @@ endif
 	cp -R -L $(build_datarootdir)/julia/* $(DESTDIR)$(datarootdir)/julia
 	# deprecation aid for base/*.jl path
 ifeq ($(BUILD_OS), WINNT)
-	cd $(DESTDIR)$(datarootdir)/julia && cmd //C mklink //J base src/base
+	cd $(DESTDIR)$(datarootdir)/julia && cmd //C mklink //J base src\\base
 else ifneq (,$(findstring CYGWIN,$(BUILD_OS)))
-	cd $(DESTDIR)$(datarootdir)/julia && cmd /C mklink /J base src/base
+	cd $(DESTDIR)$(datarootdir)/julia && cmd /C mklink /J base src\\base
 else ifndef JULIA_VAGRANT_BUILD
 	cd $(DESTDIR)$(datarootdir)/julia && ln -sf src/base base
 endif

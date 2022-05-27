@@ -4,7 +4,7 @@
 # structs/constants #
 #####################
 
-# N.B.: Const/PartialStruct/InterConditional are defined in Core, to allow them to be used
+# N.B.: Const/PartialStruct are defined in Core, to allow them to be used
 # inside the global code cache.
 #
 # # The type of a value might be constant
@@ -44,16 +44,18 @@ struct Conditional
     end
 end
 
-# # Similar to `Conditional`, but conveys inter-procedural constraints imposed on call arguments.
-# # This is separate from `Conditional` to catch logic errors: the lattice element name is InterConditional
-# # while processing a call, then Conditional everywhere else. Thus InterConditional does not appear in
-# # CompilerTypes—these type's usages are disjoint—though we define the lattice for InterConditional.
-# struct InterConditional
-#     slot::Int
-#     vtype
-#     elsetype
-# end
-import Core: InterConditional
+# Similar to `Conditional`, but conveys inter-procedural constraints imposed on call arguments.
+# This is separate from `Conditional` to catch logic errors: the lattice element name is InterConditional
+# while processing a call, then Conditional everywhere else. Thus InterConditional does not appear in
+# CompilerTypes—these type's usages are disjoint—though we define the lattice for InterConditional.
+struct InterConditional
+    slot::Int
+    vtype
+    elsetype
+    InterConditional(slot::Int, @nospecialize(vtype), @nospecialize(elsetype)) =
+        new(slot, vtype, elsetype)
+end
+
 const AnyConditional = Union{Conditional,InterConditional}
 
 struct PartialTypeVar

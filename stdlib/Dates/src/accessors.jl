@@ -42,7 +42,7 @@ function _week(days)
 end
 
 function _quarter(days)
-    m = month(days)
+    m = _month(days)
     return m < 4 ? 1 : m < 7 ? 2 : m < 10 ? 3 : 4
 end
 

@@ -1151,7 +1151,7 @@ julia> filter(!isletter, str)
 """
     Fix1(f, x)
 
-A type representing a partially-applied version of the two-argument function
+A type representing a partially-applied version of the function
 `f`, with the first argument fixed to the value "x". In other words,
 `Fix1(f, x)` behaves similarly to `y->f(x, y)`.
 
@@ -1170,7 +1170,7 @@ end
 """
     Fix2(f, x)
 
-A type representing a partially-applied version of the two-argument function
+A type representing a partially-applied version of the function
 `f`, with the second argument fixed to the value "x". In other words,
 `Fix2(f, x)` behaves similarly to `y->f(y, x)`.
 """

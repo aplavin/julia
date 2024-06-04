@@ -1165,7 +1165,7 @@ struct Fix1{F,T} <: Function
     Fix1(f::Type{F}, x) where {F} = new{Type{F},_stable_typeof(x)}(f, x)
 end
 
-(f::Fix1)(y) = f.f(f.x, y)
+(f::Fix1)(args...; kwargs...) = f.f(f.x, args...; kwargs...)
 
 """
     Fix2(f, x)
@@ -1182,7 +1182,7 @@ struct Fix2{F,T} <: Function
     Fix2(f::Type{F}, x) where {F} = new{Type{F},_stable_typeof(x)}(f, x)
 end
 
-(f::Fix2)(y) = f.f(y, f.x)
+(f::Fix2)(y, args...; kwargs...) = f.f(y, f.x, args...; kwargs...)
 
 """
     isequal(x)
